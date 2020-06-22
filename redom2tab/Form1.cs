@@ -9,108 +9,60 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Serialization;
+//using System.Xml;
+//using System.Xml.Serialization;
+//public class GZipStream : System.IO.Stream;
+    using System.IO.Compression;
 
 namespace test
 {
+    
     public partial class Form1 : Form
     {
+        string path_now;
         public Form1()
         {
             InitializeComponent();
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {/*
-            textBox1.ScrollBars = ScrollBars.Both;
-            ////////////////////////////тадагрид
-            int stro = 0;
-            for (int i = 0; i <= 100; i++) dataGridView1.Columns.Add("Column", i.ToString());
-            for (int i = 0; i < 100; i++) dataGridView1.Rows.Add();
-            for (int i = 0; i < 100; i++) dataGridView1.Rows[stro++].HeaderCell.Value = i.ToString();
-            ////////////////////////////
-            int a2, a1 = a2 = 1;
-            //DataTable datas = new string [90,90];
-            //dataGridView1.RowCount = 100;
-            //dataGridView1.ColumnCount = 100;
-            XmlDocument xDoc = new XmlDocument();
-            xDoc.Load("Y:\\source\\repos\\test_\\test\\xml_file_in\\1.xml");
-            // получим корневой элемент
-            //textBox1.Text += xDoc.ToString()+ System.Environment.NewLine;
-            XmlElement xRoot = xDoc.DocumentElement;
-            //textBox1.Text += xRoot.ToString()+System.Environment.NewLine;
-            // обход всех узлов в корневом элементе
-            foreach (XmlNode xnode in xRoot)
-            {
-                a1 = 1;
-                dataGridView1.Rows[a1].Cells[a2++].Value = xnode.FirstChild.InnerText;
-                textBox1.Text += xnode.FirstChild.InnerText + System.Environment.NewLine;
-                if (xnode.HasChildNodes)
-                {
-
-                    foreach (XmlNode xnode1 in xnode)
-                    {
-
-                        textBox1.Text += xnode1.FirstChild.InnerText + System.Environment.NewLine;
-                        //  dataGridView1.Rows[a1++].Cells[a2].Value = xnode1.FirstChild.InnerText;
-                        if (xnode1.HasChildNodes)
-                        {
-
-                            foreach (XmlNode xnode2 in xnode1)
-                            {//a2=a2 + 1;
-                             //  textBox1.Text += xnode2.FirstChild.InnerText + System.Environment.NewLine;
-                             // dataGridView1.Rows[a1].Cells[a2++].Value = xnode2.FirstChild.InnerText;
-                             //dataGridView1.Rows[a1++].Cells[a2].Value = xnode2.FirstChild.InnerText;
-                            }
-                        }
-                    }
-                }
-                // получаем атрибут name
-                /*if (xnode.Attributes.Count > 0)
-                {
-                    XmlNode attr = xnode.Attributes.GetNamedItem("record");
-                   // if (attr != null)
-                      //  textBox1.Text += attr.Value;
-                    //Console.WriteLine(attr.Value);
-                }
-                // обходим все дочерние узлы элемента user
-                foreach (XmlNode childnode in xnode.ChildNodes)
-                {
-                    // если узел - company
-                    if (childnode.Name == "source_ip")
-                        //if (childnode.
-                    {
-                        //Console.WriteLine($"count: {childnode.InnerText}");
-                        textBox1.Text += childnode.InnerText;
-                    }
-                    // если узел age
-                    if (childnode.Name == "domain")
-                    {
-                        //Console.WriteLine($"domain: {childnode.InnerText}");
-                        textBox1.Text += childnode.InnerText;
-                    }
-                */
-           
-     //   }
-    //}
-
-    //    dataGridView1.DataSource = datas;
-    //  Console.WriteLine();
-
-
-    //dataGridView1.DataSource = datas;
-    //dataGridView1.AutoResizeColumns();
-
-}
-        public class feedback
+         public void fil2tab(string filename)
         {
-            // public string feedback;
-            public string source_ip;
-            public string count;
-            public string dkim;
-            public string spf;
-            public string domain;
+            string[] res = { };
+            string[] res2 = { };
+            string[] key = { "source_ip", "count", "dkim", "spf", "domain", "result" };
+
+            DataTable dt = new DataTable("tab0");//создаем таблицу данных
+            for (int i = 0; i < key.Length; i++)//инициализируем столбцы dt по ключам
+                dt.Columns.Add(key[i]);
+            //string mas1[];
+            //string path = @"C:\SomeDir\hta.txt";
+            //  using (FileStream fs = new FileStream("Y:\\source\\repos\\test_\\test\\xml_file_in\\1.xml", FileMode.Open))
+            //            {                textBox1.Text = textfromtag(fs, "<record>", "<record>");
+            //}
+            string sfull = "", path = filename;
+                //path = "Y:\\source\\repos\\test_\\test\\xml_file_in\\1.xml";
+            string[] readText = File.ReadAllLines(path);
+            foreach (string s in readText)
+            {
+                sfull += s;
+                //Console.Read();
+
+
+
+            }
+            res = textfromtag(sfull, "record", "/record");
+            for (int j = 0; j < res.Length; j++)//считываем все в record
+            {
+                dt.Rows.Add(); // добавляем столбцы соглано 
+                for (int i = 0; i < key.Length; i++)// разбираем по key
+                {
+                    res2 = textfromtag(res[j], key[i], "/" + key[i]);
+                    textBox1.Text = textBox1.Text + res2[0];
+                    dt.Rows[j][key[i]] = res2[0];
+                    //  MessageBox.Show(dt.Rows[0][key[i]].ToString());
+                }
+                textBox1.Text += System.Environment.NewLine;
+            }
+            dataGridView1.DataSource = dt;
         }
          public string[] textfromtag(string source, string begino, string finalo)
         {//ищем содержимое в тегах
@@ -137,7 +89,26 @@ namespace test
             ////////
             return res;
         }
-        private void button3_Click(object sender, EventArgs e)
+        public static string GZipDecompress(string fulPath)
+        {   FileInfo fileToDecompress = new System.IO.FileInfo(fulPath);
+            using (FileStream originalFileStream = fileToDecompress.OpenRead())
+            {
+                string currentFileName = fileToDecompress.FullName;
+                string newFileName = currentFileName.Remove(currentFileName.Length - fileToDecompress.Extension.Length);
+                using (FileStream decompressedFileStream = File.Create(newFileName))
+                {
+                    using (GZipStream decompressionStream = new GZipStream(originalFileStream, CompressionMode.Decompress))
+                    { try
+                        {
+                            decompressionStream.CopyTo(decompressedFileStream);
+                            return decompressedFileStream.Name;//возвращаем имя извлеченного файла
+                        }
+                        catch { return "none"; }
+                    }
+                }
+            }
+        }
+            private void button3_Click(object sender, EventArgs e)
         {
             string[] res = { };
             string[] res2 = { };
@@ -252,6 +223,8 @@ namespace test
         private void Form1_Load(object sender, EventArgs e)
         {
             listView1.AllowDrop = true;
+            path_now = Directory.GetCurrentDirectory()+"\\Temp\\";
+            Directory.CreateDirectory(path_now);
           //  listView1.DragDrop += new DragEventHandler(listView1_DragDrop);
            // listView1.DragEnter += new DragEventHandler(listView1_DragEnter);
         }
@@ -269,7 +242,38 @@ namespace test
         {
 
             String fullPath = listView1.SelectedItems[0].Name;
-            MessageBox.Show(fullPath);
+            //MessageBox.Show(fullPath);
+            
+            // если не архив то открываем
+            string ext = fullPath.Remove(0, fullPath.LastIndexOf('.') + 1);
+            if (ext=="xml") fil2tab(fullPath);
+
+            if (ext == "gz")
+            {
+                fullPath=GZipDecompress(fullPath);
+            }
+            if (ext == "zip")
+            {
+                ZipFile.ExtractToDirectory(fullPath, path_now);
+                var intentedPath = string.Empty;
+                //open archive
+                //using 
+                var archive = ZipFile.OpenRead(fullPath);
+                    //.OpenRead(fullPath);
+                {
+                    //since there is only one entry grab the first
+                    var entry = archive.Entries.First();
+                    //the relative path of the entry in the zip archive
+                    var fileName = entry.FullName;
+                    //intended path once extracted would be
+                    intentedPath = Path.Combine(fullPath, fileName);
+                }
+                fullPath = intentedPath;
+            }
+
+                    ext = fullPath.Remove(0, fullPath.LastIndexOf('.') + 1);
+            if (ext == "xml") fil2tab(fullPath);
+            tab_.SelectedIndex = 2;
         }
     }
 }

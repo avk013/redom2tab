@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.button1 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tab_ = new System.Windows.Forms.TabControl();
             this.fileList = new System.Windows.Forms.TabPage();
@@ -48,17 +47,6 @@
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button1.Location = new System.Drawing.Point(209, 374);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(197, 65);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "convert >>>";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label1
             // 
@@ -190,7 +178,6 @@
             this.Controls.Add(this.button3);
             this.Controls.Add(this.tab_);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.button1);
             this.Name = "Form1";
             this.Text = "XML_DMARC_decoder";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -209,8 +196,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TabControl tab_;
         private System.Windows.Forms.TabPage tabPage1;
